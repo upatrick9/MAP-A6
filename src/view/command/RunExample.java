@@ -5,6 +5,7 @@ import controller.Controller;
 import models.PrgState;
 import models.adts.*;
 import models.statements.IStmt;
+import models.types.Type;
 import models.values.StringValue;
 import models.values.Value;
 import repository.IRepository;
@@ -28,6 +29,9 @@ public class RunExample extends Command {
     @Override
     public void execute(){
         try{
+            var typeEnv = new MyDictionary<String, Type>();
+            program.typeCheck(typeEnv);
+
             var stk = new MyStack<IStmt>();
             var sym = new MyDictionary<String, Value>();
             var out = new MyList<Value>();

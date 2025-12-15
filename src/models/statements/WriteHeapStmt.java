@@ -4,10 +4,12 @@ import models.PrgState;
 import models.adts.MyIDictionary;
 import models.adts.MyIHeap;
 import models.exceptions.MyException;
+import models.exceptions.VariableNotDefined;
 import models.expressions.Exp;
 import models.values.RefValue;
 import models.values.Value;
 import models.types.Type;
+import models.types.RefType;
 
 public class WriteHeapStmt implements IStmt{
     private final String varName;
@@ -47,6 +49,22 @@ public class WriteHeapStmt implements IStmt{
 
         heap.put(addr, evalResult);
         return null;
+    }
+
+    @Override
+    public MyIDictionary<String, Type> typeCheck(MyIDictionary<String, Type> typeEnv) throws MyException {
+        if (!typeEnv.isDefined(varName)) {
+            throw new VariableNotDefined(varName);
+        }
+        Type typeVar = typeEnv.lookup(varName);
+        if (!(typeVar instanceof RefType refT)) {
+            throw new MyException(varName + " is not a Ref type");
+        }
+        Type typeExp = expression.typecheck(typeEnv);
+        if (refT.getInner().equals(typeExp)) {
+            return typeEnv;
+        }
+        throw new MyException("Right hand side and left hand side have different types");
     }
 
     @Override

@@ -4,6 +4,7 @@ import models.adts.MyIDictionary;
 import models.adts.MyIHeap;
 import models.exceptions.*;
 import models.values.Value;
+import models.types.Type;
 
 public class VarExp implements Exp{
     private final String id;
@@ -17,6 +18,13 @@ public class VarExp implements Exp{
         if(!tbl.isDefined(id))
             throw new VariableNotDefined(id);
         return tbl.lookup(id);
+    }
+
+    @Override
+    public Type typecheck(MyIDictionary<String, Type> typeEnv) throws MyException {
+        if(!typeEnv.isDefined(id))
+            throw new VariableNotDefined(id);
+        return typeEnv.lookup(id);
     }
 
     @Override

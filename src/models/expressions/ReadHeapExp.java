@@ -3,6 +3,8 @@ package models.expressions;
 import models.adts.MyIDictionary;
 import models.adts.MyIHeap;
 import models.exceptions.MyException;
+import models.types.RefType;
+import models.types.Type;
 import models.values.RefValue;
 import models.values.Value;
 
@@ -25,6 +27,15 @@ public class ReadHeapExp implements Exp{
             throw new MyException("Address " + addr + " not in heap");
         }
         return heap.get(addr);
+    }
+
+    @Override
+    public Type typecheck(MyIDictionary<String, Type> typeEnv) throws MyException {
+        Type typ = exp.typecheck(typeEnv);
+        if (typ instanceof RefType refT){
+            return refT.getInner();
+        }
+        throw new MyException("ReadHeapExp: the rH argument is not a Ref Type");
     }
 
     @Override

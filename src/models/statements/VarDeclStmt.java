@@ -4,13 +4,7 @@ import models.PrgState;
 import models.adts.MyIDictionary;
 import models.exceptions.MyException;
 import models.exceptions.VariableAlreadyExists;
-import models.types.BoolType;
-import models.types.IntType;
-import models.types.StringType;
 import models.types.Type;
-import models.values.BoolValue;
-import models.values.IntValue;
-import models.values.StringValue;
 import models.values.Value;
 
 public class VarDeclStmt implements IStmt {
@@ -31,6 +25,14 @@ public class VarDeclStmt implements IStmt {
         symTable.update(name, type.defaultValue());
 
         return null;
+    }
+
+    @Override
+    public MyIDictionary<String, Type> typeCheck(MyIDictionary<String, Type> typeEnv) throws MyException {
+        if(typeEnv.isDefined(name))
+            throw new VariableAlreadyExists();
+        typeEnv.update(name, type);
+        return typeEnv;
     }
 
     @Override

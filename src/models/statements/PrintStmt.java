@@ -6,6 +6,7 @@ import models.adts.MyIDictionary;
 import models.exceptions.MyException;
 import models.expressions.Exp;
 import models.values.Value;
+import models.types.Type;
 
 public class PrintStmt implements IStmt{
     private final Exp exp;
@@ -20,6 +21,12 @@ public class PrintStmt implements IStmt{
         MyIDictionary<String, Value> symTable = state.getSymTable();
         out.add(exp.eval(symTable, state.getHeap()));
         return null;
+    }
+
+    @Override
+    public MyIDictionary<String, Type> typeCheck(MyIDictionary<String, Type> typeEnv) throws MyException {
+        exp.typecheck(typeEnv);
+        return typeEnv;
     }
 
     @Override

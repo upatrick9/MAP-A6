@@ -5,7 +5,9 @@ import models.adts.MyIHeap;
 import models.exceptions.InvalidArithmeticOperator;
 import models.exceptions.InvalidIntegerOperand;
 import models.exceptions.MyException;
+import models.types.BoolType;
 import models.types.IntType;
+import models.types.Type;
 import models.values.*;
 
 public class RelExp implements Exp {
@@ -37,6 +39,22 @@ public class RelExp implements Exp {
             case ">=" -> new BoolValue(n1 >= n2);
             default   -> throw new InvalidArithmeticOperator();
         };
+    }
+
+    @Override
+    public Type typecheck(MyIDictionary<String, Type> typeEnv) throws MyException {
+        Type typ1 = e1.typecheck(typeEnv);
+        Type typ2 = e2.typecheck(typeEnv);
+
+        if(typ1.equals(new IntType())){
+            if(typ2.equals(new IntType())){
+                return new BoolType();
+            }else{
+                throw new InvalidIntegerOperand();
+            }
+        } else {
+            throw new InvalidIntegerOperand();
+        }
     }
 
     @Override

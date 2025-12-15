@@ -4,6 +4,7 @@ import models.adts.MyIDictionary;
 import models.adts.MyIHeap;
 import models.exceptions.MyException;
 import models.values.Value;
+import models.types.Type;
 
 public class ValueExp implements Exp{
     private final Value e;
@@ -15,6 +16,11 @@ public class ValueExp implements Exp{
     @Override
     public Value eval(MyIDictionary<String, Value> tbl, MyIHeap<Value> heap) throws MyException {
         return e;
+    }
+
+    @Override
+    public Type typecheck(MyIDictionary<String, Type> typeEnv) throws MyException {
+        return e.getType();
     }
 
     @Override

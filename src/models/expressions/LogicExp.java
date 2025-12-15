@@ -3,6 +3,7 @@ package models.expressions;
 import models.adts.MyIDictionary;
 import models.adts.MyIHeap;
 import models.exceptions.*;
+import models.types.Type;
 import models.types.BoolType;
 import models.values.BoolValue;
 import models.values.Value;
@@ -36,6 +37,22 @@ public class LogicExp implements Exp{
             case "or" -> new BoolValue(b1 || b2);
             default -> throw new InvalidLogicOperator();
         };
+    }
+
+    @Override
+    public Type typecheck(MyIDictionary<String, Type> typeEnv) throws MyException {
+        Type typ1 = exp1.typecheck(typeEnv);
+        Type typ2 = exp2.typecheck(typeEnv);
+
+        if(typ1.equals(new BoolType())){
+            if(typ2.equals(new BoolType())){
+                return new BoolType();
+            }else{
+                throw new InvalidBooleanOperand();
+            }
+        }else{
+            throw new InvalidBooleanOperand();
+        }
     }
 
     @Override

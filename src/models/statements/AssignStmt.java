@@ -36,6 +36,18 @@ public class AssignStmt implements IStmt{
     }
 
     @Override
+    public MyIDictionary<String, Type> typeCheck(MyIDictionary<String, Type> typeEnv) throws MyException {
+        if(!typeEnv.isDefined(id))
+            throw new VariableNotDefined(id);
+        Type typeVar = typeEnv.lookup(id);
+        Type typeExp = exp.typecheck(typeEnv);
+        if(typeVar.equals(typeExp)){
+            return typeEnv;
+        }
+        throw new TypeMismatch(id);
+    }
+
+    @Override
     public IStmt deepCopy() {
         return new AssignStmt(this.id, this.exp.deepCopy());
     }

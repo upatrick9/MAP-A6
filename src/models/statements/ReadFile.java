@@ -1,11 +1,15 @@
 package models.statements;
 
 import models.PrgState;
+import models.adts.MyIDictionary;
 import models.adts.MyIFileTable;
+import models.exceptions.InvalidIntegerOperand;
 import models.exceptions.MyException;
+import models.exceptions.VariableNotDefined;
 import models.expressions.Exp;
 import models.types.IntType;
 import models.types.StringType;
+import models.types.Type;
 import models.values.*;
 
 import java.io.BufferedReader;
@@ -27,16 +31,16 @@ public class ReadFile implements IStmt {
 
         if (!symTable.isDefined(varName) ||
                 !(symTable.lookup(varName).getType() instanceof IntType))
-            throw new MyException("readFile: " + varName + " is not an int variable!");
+            throw new MyException(varName + " is not an int variable!");
 
         Value value = exp.eval(symTable, state.getHeap());
         if (!(value.getType() instanceof StringType))
-            throw new MyException("readFile: expression is not a string!");
+            throw new MyException("expression is not a string!");
 
         StringValue fileName = (StringValue) value;
 
         if (!fileTable.isDefined(fileName))
-            throw new MyException("readFile: file not opened: " + fileName.getVal());
+            throw new MyException("file not opened: " + fileName.getVal());
 
         BufferedReader br = fileTable.lookup(fileName);
 
@@ -53,10 +57,26 @@ public class ReadFile implements IStmt {
             symTable.update(varName, new IntValue(number));
 
         } catch (IOException e) {
-            throw new MyException("readFile: " + e.getMessage());
+            throw new MyException(e.getMessage());
         }
 
         return null;
+    }
+
+    @Override
+    public MyIDictionary<String, Type> typeCheck(models.adts.MyIDictionary<String, Type> typeEnv) throws MyException {
+        if (!typeEnv.isDefined(varName)) {
+            throw new VariableNotDefined(varName);
+        }
+        Type typeVar = typeEnv.lookup(varName);
+        if (!typeVar.equals(new IntType())) {
+            throw new InvalidIntegerOperand();
+        }
+        Type typeExp = exp.typecheck(typeEnv);
+        if (!typeExp.equals(new StringType())) {
+            throw new MyException("expression is not a string");
+        }
+        return typeEnv;
     }
 
     @Override

@@ -1,12 +1,14 @@
 package models.statements;
 
 import models.PrgState;
+import models.adts.MyIDictionary;
 import models.adts.MyIFileTable;
 import models.exceptions.MyException;
 import models.expressions.Exp;
 import models.types.StringType;
 import models.values.StringValue;
 import models.values.Value;
+import models.types.Type;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -25,12 +27,12 @@ public class OpenRFile implements IStmt {
 
         Value value = exp.eval(state.getSymTable(), state.getHeap());
         if (!(value.getType() instanceof StringType))
-            throw new MyException("openRFile: expression does not evaluate to a string!");
+            throw new MyException("expression does not evaluate to a string!");
 
         StringValue fileName = (StringValue) value;
 
         if (fileTable.isDefined(fileName))
-            throw new MyException("openRFile: file already opened: " + fileName.getVal());
+            throw new MyException("file already opened: " + fileName.getVal());
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(fileName.getVal()));
@@ -38,10 +40,19 @@ public class OpenRFile implements IStmt {
             fileTable.put(fileName, br);
 
         } catch (IOException e) {
-            throw new MyException("openRFile: " + e.getMessage());
+            throw new MyException(e.getMessage());
         }
 
         return null;
+    }
+
+    @Override
+    public MyIDictionary<String, Type> typeCheck(models.adts.MyIDictionary<String, Type> typeEnv) throws MyException {
+        Type t = exp.typecheck(typeEnv);
+        if (t.equals(new StringType())) {
+            return typeEnv;
+        }
+        throw new MyException("expression is not a string");
     }
 
     @Override

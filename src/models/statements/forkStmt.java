@@ -4,6 +4,7 @@ import models.adts.*;
 import models.PrgState;
 import models.exceptions.*;
 import models.values.Value;
+import models.types.Type;
 
 public class forkStmt implements IStmt {
     private final IStmt stmt;
@@ -26,6 +27,18 @@ public class forkStmt implements IStmt {
                 stmt
         );
 
+    }
+
+    private MyIDictionary<String, Type> cloneTypeEnv(MyIDictionary<String, Type> typeEnv) {
+        MyIDictionary<String, Type> newEnv = new MyDictionary<>();
+        typeEnv.getContent().forEach((k, v) -> newEnv.update(k, v.deepCopy()));
+        return newEnv;
+    }
+
+    @Override
+    public MyIDictionary<String, Type> typeCheck(MyIDictionary<String, Type> typeEnv) throws MyException {
+        stmt.typeCheck(cloneTypeEnv(typeEnv));
+        return typeEnv;
     }
 
     @Override

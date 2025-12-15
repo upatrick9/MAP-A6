@@ -7,6 +7,8 @@ import models.expressions.Exp;
 import models.types.StringType;
 import models.values.StringValue;
 import models.values.Value;
+import models.types.Type;
+import models.adts.MyIDictionary;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,6 +45,15 @@ public class CloseRFile implements IStmt {
         }
 
         return null;
+    }
+
+    @Override
+    public MyIDictionary<String, Type> typeCheck(models.adts.MyIDictionary<String, Type> typeEnv) throws MyException {
+        Type t = exp.typecheck(typeEnv);
+        if (t.equals(new StringType())) {
+            return typeEnv;
+        }
+        throw new MyException("expression is not a string");
     }
 
     @Override

@@ -3,7 +3,7 @@ package models.statements;
 import models.PrgState;
 import models.adts.MyIDictionary;
 import models.adts.MyIHeap;
-import models.exceptions.MyException;
+import models.exceptions.*;
 import models.expressions.Exp;
 import models.types.RefType;
 import models.types.Type;
@@ -25,7 +25,7 @@ public class NewStmt implements IStmt{
         MyIHeap<Value> heap = prgState.getHeap();
 
         if(!symTable.isDefined(varName)){
-            throw new MyException("Variable " + varName + " not defined");
+            throw new VariableNotDefined(varName);
         }
 
         Value varValue = symTable.lookup(varName);
@@ -43,6 +43,19 @@ public class NewStmt implements IStmt{
         int addr = heap.allocate(evalResult);
         symTable.update(varName, new RefValue(addr, locationType));
         return null;
+    }
+
+    @Override
+    public MyIDictionary<String, Type> typeCheck(MyIDictionary<String, Type> typeEnv) throws MyException{
+        if(!typeEnv.isDefined(varName)){
+            throw new VariableNotDefined(varName);
+        }
+        Type typeVar = typeEnv.lookup(varName);
+        Type typeExp = expression.typecheck(typeEnv);
+        if(typeVar.equals(new RefType(typeExp))){
+            return typeEnv;
+        }
+        throw new MyException("Right hand side and left hand side have different types");
     }
 
     @Override

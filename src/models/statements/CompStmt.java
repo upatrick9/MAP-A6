@@ -5,6 +5,7 @@ import models.adts.MyIDictionary;
 import models.adts.MyIStack;
 import models.adts.MyStack;
 import models.exceptions.MyException;
+import models.types.Type;
 
 public class CompStmt implements IStmt{
     private final IStmt first, snd;
@@ -20,6 +21,11 @@ public class CompStmt implements IStmt{
         stk.push(snd);
         stk.push(first);
         return null;
+    }
+
+    @Override
+    public MyIDictionary<String, Type> typeCheck(MyIDictionary<String, Type> typeEnv) throws MyException {
+        return snd.typeCheck(first.typeCheck(typeEnv));
     }
 
     @Override

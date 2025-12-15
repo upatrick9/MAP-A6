@@ -4,6 +4,7 @@ import models.adts.MyIDictionary;
 import models.adts.MyIHeap;
 import models.exceptions.*;
 import models.types.IntType;
+import models.types.Type;
 import models.values.IntValue;
 import models.values.Value;
 
@@ -44,6 +45,22 @@ public class ArithExp implements Exp {
             default -> throw new InvalidArithmeticOperator();
         };
 
+    }
+
+    @Override
+    public Type typecheck(MyIDictionary<String, Type> typeEnv) throws MyException {
+        Type typ1 = exp1.typecheck(typeEnv);
+        Type typ2 = exp2.typecheck(typeEnv);
+
+        if(typ1.equals(new IntType())){
+            if(typ2.equals(new IntType())){
+                return new IntType();
+            }else{
+                throw new InvalidIntegerOperand();
+            }
+        } else{
+            throw new InvalidIntegerOperand();
+        }
     }
 
     @Override
