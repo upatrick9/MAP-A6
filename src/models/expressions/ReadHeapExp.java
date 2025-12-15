@@ -35,7 +35,7 @@ public class ReadHeapExp implements Exp{
         if (typ instanceof RefType refT){
             return refT.getInner();
         }
-        throw new MyException("ReadHeapExp: the rH argument is not a Ref Type");
+        throw new MyException("the rH argument is not a Ref Type");
     }
 
     @Override
